@@ -2,7 +2,7 @@
 title: python-axel
 ---
 
-[![image](https://img.shields.io/pypi/v/python_ufile.svg)](https://pypi.python.org/pypi/python_axel)
+[![image](https://img.shields.io/pypi/v/python_axel.svg)](https://pypi.python.org/pypi/python_axel)
 
 Pythonic implementation of the Axel command-line toolkit. Python-Axel helps you speed up your downloads by downloading multiple chunks of the file at the same time, and merging them together later on.  
 

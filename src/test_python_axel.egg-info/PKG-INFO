@@ -1,0 +1,58 @@
+Metadata-Version: 2.1
+Name: test-python-axel
+Version: 1.0.1
+Summary: Download files super fast in python!
+Author-email: Aria Bagheri <ariab9342@gmail.com>
+License: MIT License
+        
+        Copyright (c) 2022, Aria Bagheri
+        
+        Permission is hereby granted, free of charge, to any person obtaining a copy
+        of this software and associated documentation files (the "Software"), to deal
+        in the Software without restriction, including without limitation the rights
+        to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+        copies of the Software, and to permit persons to whom the Software is
+        furnished to do so, subject to the following conditions:
+        
+        The above copyright notice and this permission notice shall be included in all
+        copies or substantial portions of the Software.
+        
+        THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+        IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+        FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+        AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+        LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+        OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+        SOFTWARE.
+        
+        
+Project-URL: Homepage, https://github.com/AriaBagheri/python_axel
+Keywords: python,axel,fast,download,concurrent,connections
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Programming Language :: Python
+Classifier: Programming Language :: Python :: 3
+Requires-Python: >=3.9
+Description-Content-Type: text/markdown
+License-File: LICENSE
+License-File: AUTHORS.rst
+
+---
+title: python-axel
+---
+
+[![image](https://img.shields.io/pypi/v/python_ufile.svg)](https://pypi.python.org/pypi/python_axel)
+
+Pythonic implementation of the Axel command-line toolkit. Python-Axel helps you speed up your downloads by downloading multiple chunks of the file at the same time, and merging them together later on.  
+
+-   Free software: MIT license
+-   Documentation: <https://python-axel.readthedocs.io>.
+
+# Features
+
+Download files with multiple concurrent connections in python!
+
+# Credits
+
+This package was coded in it\'s entirety by Aria Bagheri. 
+Special thanks to programmers that developed Axel cli toolkit, they helped inspire this project. 
+Also, many thanks to developers of python, and the 'requests' library.

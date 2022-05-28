@@ -1,0 +1,14 @@
+AUTHORS.rst
+CONTRIBUTING.rst
+HISTORY.rst
+LICENSE
+MANIFEST.in
+README.rst
+pyproject.toml
+setup.py
+src/axel/__init__.py
+src/test_python_axel.egg-info/PKG-INFO
+src/test_python_axel.egg-info/SOURCES.txt
+src/test_python_axel.egg-info/dependency_links.txt
+src/test_python_axel.egg-info/requires.txt
+src/test_python_axel.egg-info/top_level.txt

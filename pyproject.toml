@@ -1,0 +1,41 @@
+# pyproject.toml
+
+[build-system]
+requires      = ["setuptools>=62.3.2", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "python_axel"
+version = "1.0.0"
+description = "Download files super fast in python!"
+readme = "README.md"
+authors = [{ name = "Aria Bagheri", email = "ariab9342@gmail.com" }]
+license = { file = "LICENSE" }
+classifiers = [
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+]
+keywords = ["python", "axel", "fast", "download", "concurrent", "connections"]
+dependencies = [
+    "requests>=2.27.1"
+]
+requires-python = ">=3.9"
+
+[project.urls]
+Homepage = "https://github.com/AriaBagheri/python_axel"
+
+[tool.bumpver]
+current_version = "1.0.0"
+version_pattern = "MAJOR.MINOR.PATCH"
+commit_message  = "Bump version {old_version} -> {new_version}"
+commit          = true
+tag             = true
+push            = false
+
+[tool.bumpver.file_patterns]
+"pyproject.toml" = [
+    'current_version = "{version}"',
+    'version = "{version}"',
+]
+"src/axel/__init__.py" = ["{version}"]

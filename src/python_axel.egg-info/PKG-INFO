@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: python-axel
-Version: 1.0.0
+Version: 1.0.1
 Summary: Download files super fast in python!
 Author-email: Aria Bagheri <ariab9342@gmail.com>
 License: MIT License
@@ -40,7 +40,7 @@ License-File: AUTHORS.rst
 title: python-axel
 ---
 
-[![image](https://img.shields.io/pypi/v/python_ufile.svg)](https://pypi.python.org/pypi/python_axel)
+[![image](https://img.shields.io/pypi/v/python_axel.svg)](https://pypi.python.org/pypi/python_axel)
 
 Pythonic implementation of the Axel command-line toolkit. Python-Axel helps you speed up your downloads by downloading multiple chunks of the file at the same time, and merging them together later on.  
 

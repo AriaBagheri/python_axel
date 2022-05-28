@@ -1,4 +1,4 @@
-Welcome to python_ufile's documentation!
+Welcome to python_axel's documentation!
 ========================================
 
 .. toctree::

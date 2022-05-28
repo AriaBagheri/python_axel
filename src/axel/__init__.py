@@ -7,6 +7,7 @@ import os
 import pathlib
 import shutil
 from multiprocessing.pool import ThreadPool
+from typing import Callable
 
 import requests
 
@@ -16,11 +17,22 @@ _HEADERS = {
 _BLOCK_SIZE = 1024
 
 
+class _Progress:
+    value: int = 0
+
+    def __init__(self):
+        pass
+
+    def update(self, v: int):
+        self.value += v
+
+
 class Axel:
     def __init__(self):
         pass
 
-    def download_file(self, download_link: str, output: str, connections: int = 64):
+    def download_file(self, download_link: str, output: str, connections: int = 64,
+                      progress_callback: Callable[[int, int], None] = None):
         output_path = pathlib.Path(output)
         if output_path.is_dir():
             raise Exception("Output is not a file!")
@@ -29,22 +41,29 @@ class Axel:
         download_head = requests.head(download_link)
         accept_ranges = 'accept-ranges' in download_head.headers and 'bytes' in download_head.headers['accept-ranges']
 
-        if 'content-length' not in download_head.headers or not accept_ranges:
-            self._download_file_slow(download_link, output)
+        total_size = int(requests.head(download_link).headers['content-length'])
+
+        if not accept_ranges:
+            self._download_file_slow(download_link, output, total_size, progress_callback)
         else:
-            total_size = int(requests.head(download_link).headers['content-length'])
-            self._download_file_multithread(download_link, output_path, total_size, connections)
+            self._download_file_multithread(download_link, output_path, total_size, connections, progress_callback)
 
     @staticmethod
-    def _download_file_slow(download_link: str, output: str):
+    def _download_file_slow(download_link: str, output: str, total_size: int,
+                            progress_callback: Callable[[int, int], None] = None):
+        progress = _Progress()
         with requests.get(download_link, allow_redirects=True, stream=True) as r:
             with open(output, 'wb') as f:
                 for chunk in r.iter_content(chunk_size=_BLOCK_SIZE):
                     f.write(chunk)
+                    progress.update(len(chunk))
+                    progress_callback(progress.value, total_size)
 
     @staticmethod
-    def _download_file_multithread(download_link: str, output: pathlib.Path, total_size: int, total_connections: int):
+    def _download_file_multithread(download_link: str, output: pathlib.Path, total_size: int, total_connections: int,
+                                   progress_callback: Callable[[int, int], None] = None):
         chunk_size = math.ceil(total_size / total_connections)
+        progress = _Progress()
 
         def download_chunk(chunk_index):
             chunk_path = f"temp/{output.stem}.{chunk_index}.tmp"
@@ -65,6 +84,9 @@ class Axel:
                     with open(chunk_path, 'wb') as f:
                         for chunk in r.iter_content(chunk_size=_BLOCK_SIZE):
                             f.write(chunk)
+                            progress.update(len(chunk))
+                            progress_callback(progress.value, total_size)
+
             except requests.exceptions.RequestException as e:
                 print(e)
 

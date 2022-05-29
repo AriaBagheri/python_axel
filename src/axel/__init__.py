@@ -60,7 +60,6 @@ class Axel:
                                 download_head.headers['accept-ranges']
 
                 total_size = int(download_head.headers['content-length'])
-                print(total_size)
                 if not accept_ranges or self.connections == 1:
                     await self._download_file_slow(session, link, output, total_size)
                 else:
@@ -68,7 +67,7 @@ class Axel:
 
     async def _download_file_slow(self, session: aiohttp.ClientSession, link: str, output: str, total_size: int):
         progress = _Progress()
-        async with session.get(link, allow_redirects=True) as r:
+        async with session.get(link, allow_redirects=True, chunked=True, timeout=None) as r:
             async with aiofiles.open(output, 'wb') as f:
                 async for chunk, _ in r.content.iter_chunks():
                     await f.write(chunk)
@@ -91,7 +90,8 @@ class Axel:
             range_header = _HEADERS.copy()
             range_header['Range'] = f"bytes={start_chunk}-{end_chunk - 1}"
             try:
-                async with session.get(link, headers=range_header, allow_redirects=True, chunked=True) as r:
+                async with session.get(link, headers=range_header, allow_redirects=True, chunked=True,
+                                       timeout=None) as r:
                     async with aiofiles.open(chunk_path, 'wb') as f:
                         async for chunk, _ in r.content.iter_chunks():
                             await f.write(chunk)

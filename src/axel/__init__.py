@@ -1,6 +1,6 @@
 __author__ = """Aria Bagheri"""
 __email__ = 'ariab9342@gmail.com'
-__version__ = '1.0.4'
+__version__ = '1.0.5'
 
 import asyncio
 import datetime
@@ -15,7 +15,7 @@ import aiohttp as aiohttp
 import requests
 
 _HEADERS = {
-    'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/1.0.4.94 Safari/537.36'
+    'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/1.0.5.94 Safari/537.36'
 }
 
 

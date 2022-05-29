@@ -33,7 +33,7 @@ class Axel:
     connections: int = 64
     progress_callback: Callable[[int, int], Awaitable[Any]] = None
 
-    def __init__(self, block_size: int = 5368709 * 2, connections: 64 = 64,
+    def __init__(self, block_size: int = 5368709 * 2, connections: int = 64,
                  progress_callback: Callable[[int, int], Awaitable[Any]] = None):
         self.block_size = block_size
         self.connections = connections
@@ -60,7 +60,7 @@ class Axel:
         progress = _Progress()
         async with session.get(link, allow_redirects=True) as r:
             async with aiofiles.open(output, 'wb') as f:
-                async for chunk_c in r.content.iter_chunks():
+                async for chunk_c in r.content.iter_chunked(self.block_size):
                     chunk = await chunk_c
                     await f.write(chunk)
                     progress.update(len(chunk))
@@ -89,7 +89,7 @@ class Axel:
             try:
                 async with session.get(link, headers=range_header, timeout=30, allow_redirects=True) as r:
                     async with aiofiles.open(chunk_path, 'wb') as f:
-                        async for chunk in r.content.iter_chunked(64):
+                        async for chunk in r.content.iter_chunked(self.block_size):
                             await f.write(chunk)
                             progress.update(len(chunk))
 

@@ -3,6 +3,7 @@ __email__ = 'ariab9342@gmail.com'
 __version__ = '1.0.4'
 
 import asyncio
+import datetime
 import math
 import os
 import pathlib
@@ -19,6 +20,7 @@ _HEADERS = {
 
 
 class _Progress:
+    last_update_at: datetime.datetime = None
     value: int = 0
 
     def __init__(self):
@@ -27,13 +29,21 @@ class _Progress:
     def update(self, v: int):
         self.value += v
 
+    def should_update(self):
+        if not self.last_update_at:
+            self.last_update_at = datetime.datetime.now()
+        if self.last_update_at + datetime.timedelta(milliseconds=200) >= datetime.datetime.now():
+            return False
+        self.last_update_at = datetime.datetime.now()
+        return True
+
 
 class Axel:
     block_size = 5368709 * 2
-    connections: int = 64
+    connections: int = 16
     progress_callback: Callable[[int, int], Awaitable[Any]] = None
 
-    def __init__(self, block_size: int = 5368709 * 2, connections: int = 64,
+    def __init__(self, block_size: int = 5368709 * 2, connections: int = 16,
                  progress_callback: Callable[[int, int], Awaitable[Any]] = None):
         self.block_size = block_size
         self.connections = connections
@@ -50,7 +60,7 @@ class Axel:
                                 download_head.headers['accept-ranges']
 
                 total_size = int(download_head.headers['content-length'])
-
+                print(total_size)
                 if not accept_ranges or self.connections == 1:
                     await self._download_file_slow(session, link, output, total_size)
                 else:
@@ -60,8 +70,7 @@ class Axel:
         progress = _Progress()
         async with session.get(link, allow_redirects=True) as r:
             async with aiofiles.open(output, 'wb') as f:
-                async for chunk_c in r.content.iter_chunked(self.block_size):
-                    chunk = await chunk_c
+                async for chunk, _ in r.content.iter_chunks():
                     await f.write(chunk)
                     progress.update(len(chunk))
 
@@ -75,25 +84,20 @@ class Axel:
 
         async def download_chunk(chunk_index):
             chunk_path = f"temp/{output.stem}.{chunk_index}.tmp"
-            if os.path.exists(chunk_path):
-                already_chunk = os.path.getsize(chunk_path)
-            else:
-                already_chunk = 0
 
-            start_chunk = chunk_size * chunk_index + already_chunk
+            start_chunk = chunk_size * chunk_index
             end_chunk = chunk_size * (chunk_index + 1)
 
             range_header = _HEADERS.copy()
             range_header['Range'] = f"bytes={start_chunk}-{end_chunk - 1}"
-
             try:
-                async with session.get(link, headers=range_header, timeout=30, allow_redirects=True) as r:
+                async with session.get(link, headers=range_header, allow_redirects=True, chunked=True) as r:
                     async with aiofiles.open(chunk_path, 'wb') as f:
-                        async for chunk in r.content.iter_chunked(self.block_size):
+                        async for chunk, _ in r.content.iter_chunks():
                             await f.write(chunk)
                             progress.update(len(chunk))
 
-                            if self.progress_callback:
+                            if self.progress_callback and progress.should_update():
                                 await self.progress_callback(progress.value, total_size)
 
             except requests.exceptions.RequestException as e:
@@ -103,12 +107,11 @@ class Axel:
             return asyncio.get_event_loop().create_task(download_chunk(j))
 
         tasks = map(add_to_event_loop, range(self.connections))
-
         await asyncio.gather(*tasks)
 
         with open(output, 'wb') as fm:
             for i in range(self.connections):
                 temp_path = f"temp/{output.stem}.{i}.tmp"
                 with open(temp_path, 'rb') as fi:
-                    shutil.copyfileobj(fi, fm, self.block_size)
+                    shutil.copyfileobj(fi, fm)
                 os.remove(temp_path)
